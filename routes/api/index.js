@@ -11,7 +11,7 @@ api_router.get('/options', function(req, res, next) {
     Activity.findAll()
   ])
   .spread(function(dbHotels, dbRestaurants, dbActivities) {
-    res.json('index', {
+    res.send({
       templateHotels: dbHotels,
       templateRestaurants: dbRestaurants,
       templateActivities: dbActivities

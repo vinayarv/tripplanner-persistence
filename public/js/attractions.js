@@ -7,16 +7,29 @@
  * to add an attraction in the `options` module.
  */
 
+var hotels, restaurants, activities;
+var enhanced;
+
+
+
 var attractionsModule = (function () {
 
-  // application state
+  optionsPromise.then(function(responseData){
+  hotels = responseData.templateHotels;
+  restaurants = responseData.templateRestaurants;
+  activities = responseData.templateActivities;
 
-  var enhanced = {
+  // application state
+ enhanced = {
     hotels: hotels.map(attractionModule.create),
     restaurants: restaurants.map(attractionModule.create),
     activities: activities.map(attractionModule.create),
   };
 
+})
+.catch(function(err){
+  console.log("attractions: ", err);
+})
   // private helper methods (only available inside the module)
 
   function findById (array, id) {
@@ -49,3 +62,4 @@ var attractionsModule = (function () {
   return publicAPI;
 
 }());
+

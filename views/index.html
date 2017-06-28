@@ -82,22 +82,24 @@
   </div>
 </div>
 <script src="/jquery/jquery.min.js"></script>
-<!-- <script src="js/db_sources.js"></script> -->
-<script >
+<script src="js/db_sources.js"></script>
+<!--<script >
   var hotels, restaurants, activities;
 $.ajax({
     method: 'GET',
-    url: '/routes/api/options'
+    url: '/api/options'
   })
   .then(function (responseData) {
     // const actualNumber = responseData.length;
     // $('#num-survery-results').text(actualNumber);
+    console.dir(responseData.templateHotels);
     hotels = responseData.templateHotels;
+    console.log("typeof:" + typeof(hotels));
     restaurants = responseData.templateRestaurants;
     activities = responseData.templateActivities;
     console.log("hotels: " +hotels);
     console.log(responseData.length);
   })
   .catch(alert);
-  </script>
+  </script>-->
 {% endblock %}
