@@ -15,24 +15,24 @@
  * which take `attraction` objects and pass them to `currentDay`.
  */
 
-var tripModule = (function () {
+var tripModule = (function() {
 
   // application state
 
   var days = [],
-      currentDay;
+    currentDay;
 
   // jQuery selections
 
   var $addButton, $removeButton;
-  $(function () {
+  $(function() {
     $addButton = $('#day-add');
     $removeButton = $('#day-title > button.remove');
   });
 
   // method used both internally and externally
 
-  function switchTo (newCurrentDay) {
+  function switchTo(newCurrentDay) {
     if (currentDay) currentDay.hide();
     currentDay = newCurrentDay;
     currentDay.show();
@@ -40,12 +40,12 @@ var tripModule = (function () {
 
   // jQuery event binding
 
-  $(function () {
+  $(function() {
     $addButton.on('click', addDay);
     $removeButton.on('click', deleteCurrentDay);
   });
 
-  function addDay () {
+  function addDay() {
     if (this && this.blur) this.blur(); // removes focus box from buttons
     var newDay = dayModule.create({ number: days.length + 1 }); // dayModule
     days.push(newDay);
@@ -55,7 +55,7 @@ var tripModule = (function () {
     switchTo(newDay);
   }
 
-  function deleteCurrentDay () {
+  function deleteCurrentDay() {
     // prevent deleting last day
     if (days.length < 2 || !currentDay) return;
     // remove from the collection
@@ -63,7 +63,7 @@ var tripModule = (function () {
       previousDay = days.splice(index, 1)[0],
       newCurrent = days[index] || days[index - 1];
     // fix the remaining day numbers
-    days.forEach(function (day, i) {
+    days.forEach(function(day, i) {
       day.setNumber(i + 1);
     });
     switchTo(newCurrent);
@@ -73,18 +73,47 @@ var tripModule = (function () {
   // globally accessible module methods
 
   var publicAPI = {
+    daysData: [],
 
-    load: function () {
-      $(addDay);
+    load: function() {
+      // $(addDay);
+      $.ajax({
+          method: 'GET',
+          url: '/api/days'
+        })
+        .then(function(data) {
+          console.log('GET response data: ', data);
+          console.log(this);
+          if (!data.templateDays) {
+            $.ajax({
+                method: 'POST',
+                url: '/api/days',
+                data: {
+                  number: 1,
+                }
+              })
+              .then(function(data) { console.log('POST response data: ', data) })
+              .catch(console.error.bind(console));
+
+          } else {
+            publicAPI.daysData = data.templateDays.map(day => {
+              return dayModule.create(day)
+            });
+            console.dir(publicAPI.daysData);
+            var tempDay = dayModule.create(data.templateDays[0]);
+            tempDay.show();
+          }
+        })
+        .catch(console.error.bind(console));
     },
 
     switchTo: switchTo,
 
-    addToCurrent: function (attraction) {
+    addToCurrent: function(attraction) {
       currentDay.addAttraction(attraction);
     },
 
-    removeFromCurrent: function (attraction) {
+    removeFromCurrent: function(attraction) {
       currentDay.removeAttraction(attraction);
     }
 

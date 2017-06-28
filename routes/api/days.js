@@ -6,7 +6,9 @@ var Activity = require('../../models').Activity;
 var Day = require('../../models').Day;
 
 day_router.get('/', function(req, res, next) {
-  Day.findAll()
+  Day.findAll({
+    order: 'number'
+  })
     .then(function(dbDays) {
       res.send({
         templateDays: dbDays
@@ -48,9 +50,11 @@ day_router.put('/:dayNumber/:type', function(req, res, next) {
 })
 
 day_router.post('/', function(req, res, next) {
-  Day.create()
-    .then(function(bool) {
-      return
+  Day.create({
+    number: req.body.number
+  })
+    .then(function(createdObj, bool) {
+      return createdObj
     })
     .catch(next);
 })
